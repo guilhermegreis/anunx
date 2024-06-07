@@ -2,6 +2,10 @@ import {
     Box,
     Button,
     Container,
+    FormControl,
+    InputLabel,
+    OutlinedInput,
+    InputAdornment,
     IconButton,
     Select,
     TextField,
@@ -148,7 +152,7 @@ const Publish = () => {
                         <option value={3}>Carros, Motos e Barcos</option>
                         <option value={3}>Serviços</option>
                         <option value={3}>Lazer</option>
-                        <option value={3}>Animais</option>
+                        <option value={3}>Animais</option> 
                         <option value={3}>Moveis, Casa e Jardim</option>
                         <option value={3}>Imóveis</option>
                         <option value={3}>Equipamentos e Ferramentas</option>
@@ -219,6 +223,23 @@ const Publish = () => {
                         variant="outlined"
                         fullWidth
                     />
+                </Box>
+            </Container>
+
+            <Container maxWidth="md" className={classes.boxContainer}>
+                <Box className={classes.box}>
+                    <Typography component="h6" variant="h6" color="textPrimary">
+                        Preço
+                    </Typography>
+                    <br />
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Valor</InputLabel>
+                        <OutlinedInput 
+                            onChange={() => {}}
+                            startAdornment={<InputAdornment position="start">R$</InputAdornment>}
+                            labelWidth={40}
+                        />
+                    </FormControl>
                 </Box>
             </Container>
 
