@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Default = ({ children }) => {
+const TemplateDefault = ({ children }) => {
     const classes = useStyles()
 
     return (
@@ -24,4 +24,4 @@ const Default = ({ children }) => {
     )
 }
 
-export default Default
+export default TemplateDefault
