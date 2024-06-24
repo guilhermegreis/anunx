@@ -1,5 +1,6 @@
 import { Formik } from "formik"
-import TemplateDefault from "@/templates/Default"
+import axios from "axios"
+import { useRouter } from "next/router"
 
 import { 
     Box,
@@ -9,14 +10,35 @@ import {
     InputLabel,
     Input,
     FormHelperText,
-    Button
+    Button,
+    CircularProgress
 } from "@material-ui/core"
 
+import TemplateDefault from "@/templates/Default"
 import useStyles from "./styles"
 import { initialValues, validationSchema } from "../../user/publish/formValues"
+import { useToasty } from "../../../src/contexts/Toasty"
 
 const Signup = () => {
     const classes = useStyles()
+    const router = useRouter()
+    const { setToasty } = useToasty()
+
+    const handleFormSubmit = async values => {
+        const response = await axios.post('/api/users', values)
+
+        console.log(response)
+
+        if (response.data.success) {
+            setToasty({
+                open: true,
+                severity: 'success',
+                text: 'Cadastro realizado com sucesso!'
+            })
+
+            router.push('/auth/signin')
+        }
+    }
 
     return (
         <TemplateDefault>
@@ -34,9 +56,7 @@ const Signup = () => {
                     <Formik
                         initialValues={initialValues}
                         validationSchema={validationSchema}
-                        onSubmit={(values) => {
-                            console.log('ok, form enviado', values)
-                        }}
+                        onSubmit={handleFormSubmit}
                     >
                         {
                             ({
@@ -44,9 +64,11 @@ const Signup = () => {
                                 values,
                                 errors,
                                 handleChange,
+                                handleSubmit,
+                                isSubmitting,
                             }) => {
                                 return (
-                                    <form>
+                                    <form onSubmit={handleSubmit}>
                                         <FormControl fullWidth error={errors.name && touched.name} className={classes.formControl}>
                                             <InputLabel>Nome</InputLabel>
                                             <Input
@@ -98,15 +120,23 @@ const Signup = () => {
                                             </FormHelperText>
                                         </FormControl>
 
-                                        <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            className={classes.submit}
-                                        >
-                                            Cadastrar
-                                        </Button>
+                                        {
+                                            isSubmitting
+                                                ?   (
+                                                    <CircularProgress className={classes.loading}/>
+                                                )   :   (
+                                                    <Button
+                                                        type="submit"
+                                                        fullWidth
+                                                        variant="contained"
+                                                        color="primary"
+                                                        className={classes.submit}
+                                                    >
+                                                        Cadastrar
+                                                    </Button>
+                                                )
+                                        }
+
                                     </form>
                                 )
                             }
