@@ -20,22 +20,16 @@ async function dbConnect() {
     }
 
     if(!cached.promise) {
-        const opts = {
-            useNewUrLParser: true,
+        cached.promise = mongoose.connect(MONGODB_URI, {
+            useNewUrlParser: true,
             useUnifiedTopology: true,
-            bufferCommands: false,
-            bufferMaxEntries: 0,
-            useFindAndModify: false,
-            useCreateIndex: true,
-        }
-
-        cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-            console.log('Connected to database')
-            return mongoose
-        })
+        }).then((mongoose) => {
+            console.log('Connected to database');
+            return mongoose;
+        });
     }
-    cached.conn =  await cached.promise
-    return cached.conn
+    cached.conn =  await cached.promise;
+    return cached.conn;
 }
 
 export default dbConnect
