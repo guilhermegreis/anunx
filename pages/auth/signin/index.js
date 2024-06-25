@@ -21,7 +21,7 @@ import useStyles from "./styles";
 import { initialValues, validationSchema } from "../../user/publish/formValues";
 import { useToasty } from "../../../src/contexts/Toasty";
 
-const Signin = () => {
+const Signin = ({ APP_URL }) => {
     const classes = useStyles();
     const router = useRouter();
     const { setToasty } = useToasty();
@@ -29,9 +29,11 @@ const Signin = () => {
 
     console.log(session);
 
-    const handleGoogleLogin = () => signIn('google', {
-        callbackUrl: 'http://localhost:3000/user/dashboard'
-    });
+    const handleGoogleLogin = () => {
+        signIn('google', {
+            callbackUrl: `${APP_URL}/user/dashboard`
+        })
+    }
 
     const handleFormSubmit = async values => {
         signIn('credentials', {
@@ -136,5 +138,11 @@ const Signin = () => {
         </TemplateDefault>
     );
 };
+
+Signin.getServerSideProps = async function() {
+    return{
+        APP_URL: process.env.APP_URL
+    }
+}
 
 export default Signin;
