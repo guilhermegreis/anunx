@@ -1,32 +1,31 @@
 import axios from "axios";
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 export default NextAuth({
-    providers:[
-        Providers.Google({
+    providers: [
+        GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
-        
-        Providers.Credentials({
+        CredentialsProvider({
             name: 'Credentials',
-            async authorize(credentials, req) {
-                const res = axios.post('http://localhost:3000/api/auth/sigin', credentials)
+            async authorize(credentials) {
+                const res = await axios.post('http://localhost:3000/api/auth/signin', credentials);
+                const user = res.data;
 
-                const user = res.data
-
-                if(user){
-                    return user
+                if (user) {
+                    return user;
                 } else {
-                    throw '/auth/signin?i=1'
+                    throw new Error('/auth/signin?i=1');
                 }
-            }
-        })
+            },
+        }),
     ],
 
     session: {
-        jwt: true,
+        strategy: "jwt",
     },
 
     jwt: {
@@ -34,4 +33,4 @@ export default NextAuth({
     },
 
     database: process.env.MONGODB_URI,
-})
+});
