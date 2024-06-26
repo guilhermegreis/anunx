@@ -10,6 +10,7 @@ import Card from '../../src/components/Card'
 import { getSession } from 'next-auth/react'
 import ProductsModel from "../../src/models/products"
 import dbConnect from '@/utils/dbConnect'
+import { formatCurrency } from '@/utils/currency'
 
 const useStyles = makeStyles((theme) => ({
     buttonAdd: {
@@ -39,7 +40,7 @@ const Home = ({ products }) => {
                                 <Card
                                     image={`/uploads/${product.files[0].name}`}
                                     title={product.title}
-                                    subtitle={product.price}
+                                    subtitle={formatCurrency(product.price)}
                                     actions={
                                         <>
                                             <Button size="small" color="primary">
