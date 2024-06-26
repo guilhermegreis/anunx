@@ -9,6 +9,8 @@ import {
 
 import { makeStyles } from "@material-ui/core";
 import { formatCurrency } from "@/utils/currency";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 import slugify from "slugify";
 import Link from "next/link";
@@ -34,7 +36,16 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const Home = ({ products  }) => {
+    const router = useRouter()
+    const [search, setSearch] = useState()
     const classes = useStyles()
+
+    const handleSubmitSearch = () => {
+        router.push({
+            pathname: `/search/${search}`,
+        })
+    }
+
     return(
         <TemplateDefault>
             <Container maxWidth="md">
@@ -42,11 +53,12 @@ const Home = ({ products  }) => {
                     O que deseja encontrar?
                 </Typography>
                 <Paper className={classes.searchBox}>
-                    <InputBase 
+                    <InputBase
+                        onChange={(e) => setSearch(e.target.value)}
                         placeholder="Ex.: iPhone 12 com garantia"
                         fullWidth
                     />
-                    <IconButton>
+                    <IconButton onClick={handleSubmitSearch}>
                         <SearchIcon />
                     </IconButton>
                 </Paper>
@@ -62,7 +74,6 @@ const Home = ({ products  }) => {
                     products.map(product => {
                         const category = slugify(product.category).toLocaleLowerCase()
                         const title = slugify(product.title).toLocaleLowerCase()
-
 
                         return(
                             <Grid key={product._id} item xs={12} sm={6} md={4}>
