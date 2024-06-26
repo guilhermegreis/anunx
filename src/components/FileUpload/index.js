@@ -13,12 +13,9 @@ const FileUpload = ({ files, errors, touched, setFieldValue }) => {
     const { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
         onDrop: (acceptedFile) => {
-            const newFiles = acceptedFile.map(file => {
-                return {
-                    ...file,
-                    preview: URL.createObjectURL(file)
-                }
-            })
+            const newFiles = acceptedFile.map(file => Object.assign(file, {
+                preview: URL.createObjectURL(file)
+            }))
 
             setFieldValue([
                 ...files,
@@ -29,7 +26,7 @@ const FileUpload = ({ files, errors, touched, setFieldValue }) => {
 
     const handleRemoveFile = filePath => {
         const newFileState = files.filter(file => file.path !== filePath)
-        setFieldValue(newFileState)
+        setFieldValue('files', newFileState)
     }
 
     return (
