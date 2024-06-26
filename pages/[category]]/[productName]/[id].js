@@ -1,8 +1,12 @@
 import { Avatar, Box, Card, CardHeader, CardMedia, Chip, Container, Grid, Typography } from "@material-ui/core";
-import TemplateDefault from "../src/templates/Default";
-import Carousel from "react-material-ui-carousel";
-
+import { formatCurrency } from "@/utils/currency";
 import { makeStyles } from "@material-ui/core/styles";
+
+import TemplateDefault from "../../../src/templates/Default";
+import ProductsModel from "../../../src/models/products"
+
+import Carousel from "react-material-ui-carousel";
+import dbConnect from "@/utils/dbConnect";
 
 const useStyles = makeStyles((theme) => ({
     box: {
@@ -25,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const Product = () => {
+const Product = ({ product }) => {
     const classes = useStyles()
 
     return(
@@ -44,34 +48,31 @@ const Product = () => {
                                     }
                                 }}
                             >
-                                <Card className={classes.card}>
-                                    <CardMedia
-                                        className={classes.cardMedia} 
-                                        image="https://source.unsplash.com/random"
-                                        title="Título da imagem"
-                                        />
-                                </Card>
-                                <Card className={classes.card}>
-                                    <CardMedia
-                                        className={classes.cardMedia} 
-                                        image="https://source.unsplash.com/random"
-                                        title="Título da imagem"
-                                        />
-                                </Card>
+                                {
+                                    product.files.map(file => (
+                                        <Card key={file.name} className={classes.card}>
+                                            <CardMedia
+                                                className={classes.cardMedia} 
+                                                image={`/uploads/${file.name}`}
+                                                title={product.title}
+                                            />
+                                        </Card>
+                                    ))
+                                }
                             </Carousel>
                         </Box>
 
                         <Box className={classes.box} textAlign="left">
                             <Typography component="span" variant="caption" className={classes.titles}>Publicado 16 junho de 2024</Typography>
-                            <Typography component="h4" variant="h4" className={classes.productName}>Jaguar XE 2.0 D R-Sport Aut.</Typography>
-                            <Typography component="h4" variant="h4" className={classes.price}>R$ 50.000,00</Typography>
-                            <Chip label="Categoria" />
+                            <Typography component="h4" variant="h4" className={classes.productName}>{product.title}</Typography>
+                            <Typography component="h4" variant="h4" className={classes.price}>{formatCurrency(product.price)}</Typography>
+                            <Chip label={product.category} />
                         </Box>
 
                         <Box className={classes.box} textAlign="left">
                             <Typography component="h6" variant="h6">Descrição</Typography>
                             <Typography component="p" variant="body2">
-                                Lorem Ipsum is simply
+                                {product.description}
                             </Typography>
                         </Box>
                     </Grid>
@@ -80,25 +81,43 @@ const Product = () => {
                         <Card elevation={0} className={classes.box}>
                             <CardHeader 
                                 avatar={
-                                    <Avatar>G</Avatar>
+                                    <Avatar src={product.user.image}>
+                                        { product.user.image || product.user.name[0 ]}
+                                    </Avatar>
                                 }
-                                title="Guilherme Reis"
-                                subheader="guiglreis@gmail.com"
+                                title={product.user.name}
+                                subheader={product.user.email}
                             />
                             <CardMedia 
-                                image="https://source.unsplash.com/random"
-                                title="Guilherme Reis"
+                                image={product.user.image}
+                                title={product.user.name}
                             />
                         </Card>
 
                         <Box className={classes.box}>
-                            <Typography component="h6" variant="h6">Localização</Typography>
+                            <Typography component="h6" variant="h6">
+                                Localização
+                            </Typography>
                         </Box>
                     </Grid>
                 </Grid>
             </Container>
         </TemplateDefault>
     )
+}
+
+export async function getServerSideProps({ query }) {
+    const { id } = query
+
+    await dbConnect()
+
+    const products = await ProductsModel.findOne({ _id: id })
+
+    return {
+        props: {
+            product: JSON.parse(JSON.stringify(product))
+        }
+    }
 }
 
 export default Product
